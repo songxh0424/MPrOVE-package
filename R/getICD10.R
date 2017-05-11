@@ -7,9 +7,13 @@
 #' matching the ICD9 codes given. Otherwise, if  \code{return.value='All'}
 #' a matrix consisting of rows from \code{ICD9to10} matching 
 #' the requested ICD9 codes. 
+#' @examples 
+#' ICD9vec <- as.character(c(30781,33900:33999,3460:3469))
+#' ICD10vec <- getICD10(ICD9vec)
+#' head(ICD10vec)
 #' @export
 getICD10 <- function(ICD9vec,return.value=c('ICD10only','All')){
-  if(!{'ICD9to10' %in% ls()}){
+  if(!{'ICD9to10' %in% ls(envir=.GlobalEnv)}){
     data(ICD9to10)
   }
   rv <- match.arg(return.value,c('ICD10only','All'))
