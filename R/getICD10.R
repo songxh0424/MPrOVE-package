@@ -1,11 +1,12 @@
-#' Convert ICD9 codes to ICD10 codes
+#' Convert between ICD9 codes and ICD10 codes
 #' 
 #' @param ICD9vec A vector of ICD9 codes to convert
+#' @param ICD10vec A vector of ICD10 codes to convert
 #' @param return.value By default only ICD10 codes are returned, set to 'All' 
 #' to also return flags
 #' @return If \code{return.value='ICD10only'} a vector of ICD10 codes 
-#' matching the ICD9 codes given. Otherwise, if  \code{return.value='All'}
-#' a matrix consisting of rows from \code{ICD9to10} matching 
+#' matching the ICD9 codes given (duplicates are omitted). Otherwise, if  \code{return.value='All'}
+#' a data frame consisting of rows from \code{ICD9to10} matching 
 #' the requested ICD9 codes. 
 #' @examples 
 #' ICD9vec <- as.character(c(30781,33900:33999,3460:3469))
@@ -16,10 +17,22 @@ getICD10 <- function(ICD9vec,return.value=c('ICD10only','All')){
   if(!{'ICD9to10' %in% ls(envir=.GlobalEnv)}){
     data(ICD9to10)
   }
+  dat <- as.data.frame(ICD9to10, stringsAsFactors = FALSE)
   rv <- match.arg(return.value,c('ICD10only','All'))
 
-  cd <-ICD9to10[unique(unlist(
-    sapply(ICD9vec,function(ICD9) grep(ICD9,ICD9to10[,1])))),]
+  cd <- dat %>% filter(ICD9 %in% ICD9vec)
   if(rv=='All') return(cd)
-  return(cd[,2])
+  return(unique(cd[,2]))
+}
+#' @rdname getICD10
+getICD9 <- function(ICD10vec, return.value = c('ICD9only', 'All')) {
+  if(!{'ICD9to10' %in% ls(envir=.GlobalEnv)}){
+    data(ICD9to10)
+  }
+  dat <- as.data.frame(ICD9to10, stringsAsFactors = FALSE)
+  rv <- match.arg(return.value,c('ICD9only','All'))
+  
+  cd <- dat %>% filter(ICD10 %in% ICD10vec)
+  if(rv=='All') return(cd)
+  return(unique(cd[,1]))
 }
