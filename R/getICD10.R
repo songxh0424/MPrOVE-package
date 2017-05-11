@@ -19,8 +19,10 @@ getICD10 <- function(ICD9vec,return.value=c('ICD10only','All')){
   }
   dat <- as.data.frame(ICD9to10, stringsAsFactors = FALSE)
   rv <- match.arg(return.value,c('ICD10only','All'))
-
-  cd <- dat %>% filter(ICD9 %in% ICD9vec)
+  idx <- sapply(ICD9vec, function(ICD9) {
+    grep(sprintf('^%s', ICD9), ICD9to10[, 1])
+  })
+  cd <- ICD9to10[unique(unlist(idx)), ]
   if(rv=='All') return(cd)
   return(unique(cd[,2]))
 }
@@ -31,8 +33,10 @@ getICD9 <- function(ICD10vec, return.value = c('ICD9only', 'All')) {
   }
   dat <- as.data.frame(ICD9to10, stringsAsFactors = FALSE)
   rv <- match.arg(return.value,c('ICD9only','All'))
-  
-  cd <- dat %>% filter(ICD10 %in% ICD10vec)
+  idx <- sapply(ICD10vec, function(ICD10) {
+    grep(sprintf('^%s', ICD10), ICD9to10[, 1])
+  })
+  cd <- ICD9to10[unique(unlist(idx)), ]
   if(rv=='All') return(cd)
   return(unique(cd[,1]))
 }
