@@ -21,3 +21,8 @@ the requested ICD9 codes.
 \description{
 Convert ICD9 codes to ICD10 codes
 }
+\examples{
+ICD9vec <- as.character(c(30781,33900:33999,3460:3469))
+ICD10vec <- getICD10(ICD9vec)
+head(ICD10vec)
+}
