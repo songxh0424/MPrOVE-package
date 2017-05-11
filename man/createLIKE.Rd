@@ -23,8 +23,8 @@ to be put in the \code{$LIKE} list.}
 }
 \value{
 Both functions return a list object.
-\item{LIKE   }{contains sub-lists of starting string patterns.}
-\item{IN   }{contains all other ICD10 codes in \code{codes} that don't match 
+\item{LIKE}{Sub-lists of starting string patterns.}
+\item{IN}{All other ICD10 codes in \code{codes} that don't match 
 those patterns. }
 }
 \description{

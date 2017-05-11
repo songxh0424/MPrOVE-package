@@ -2,24 +2,29 @@
 % Please edit documentation in R/getICD10.R
 \name{getICD10}
 \alias{getICD10}
-\title{Convert ICD9 codes to ICD10 codes}
+\alias{getICD9}
+\title{Convert between ICD9 codes and ICD10 codes}
 \usage{
 getICD10(ICD9vec, return.value = c("ICD10only", "All"))
+
+getICD9(ICD10vec, return.value = c("ICD9only", "All"))
 }
 \arguments{
 \item{ICD9vec}{A vector of ICD9 codes to convert}
 
 \item{return.value}{By default only ICD10 codes are returned, set to 'All' 
 to also return flags}
+
+\item{ICD10vec}{A vector of ICD10 codes to convert}
 }
 \value{
 If \code{return.value='ICD10only'} a vector of ICD10 codes 
-matching the ICD9 codes given. Otherwise, if  \code{return.value='All'}
-a matrix consisting of rows from \code{ICD9to10} matching 
+matching the ICD9 codes given (duplicates are omitted). Otherwise, if  \code{return.value='All'}
+a data frame consisting of rows from \code{ICD9to10} matching 
 the requested ICD9 codes.
 }
 \description{
-Convert ICD9 codes to ICD10 codes
+Convert between ICD9 codes and ICD10 codes
 }
 \examples{
 ICD9vec <- as.character(c(30781,33900:33999,3460:3469))
