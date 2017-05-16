@@ -6,6 +6,7 @@
 #' @param dict A vector of ICD10 codes as strings.
 #' @return Returns \code{TRUE} if all strings in \code{dict} starting with 
 #' \code{str} are in \code{codes}, \code{FALSE} otherwise. 
+#' @export
 checkLike <- function(str,codes,dict){
   # returns TRUE if all strings in dict starting with 'str' are in codes 
   length(setdiff(dict[grep(sprintf('^%s',str),dict)],

@@ -9,6 +9,7 @@
 #'                 72479,7385,7393,7394,8460:8469)
 #' bpElibICD10 <- unique(getICD10(bpEligICD9))
 #' addPeriods(bpElibICD10)
+#' @export
 addPeriods <- function(x){
   paste(stringr::str_sub(x, 1, 3), '.', stringr::str_sub(x, start = 4), sep = '')
 }

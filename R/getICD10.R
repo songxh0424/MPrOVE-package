@@ -8,6 +8,8 @@
 #' matching the ICD9 codes given (duplicates are omitted). Otherwise, if  \code{return.value='All'}
 #' a data frame consisting of rows from \code{ICD9to10} matching 
 #' the requested ICD9 codes. 
+#' @details For \code{getICD10}, the conversion is done using \code{ICD9to10} dataset. 
+#' For \code{getICD9}, the conversion is done using \code{ICD10to9} dataset. 
 #' @examples 
 #' ICD9vec <- as.character(c(30781,33900:33999,3460:3469))
 #' ICD10vec <- getICD10(ICD9vec)
@@ -17,26 +19,25 @@ getICD10 <- function(ICD9vec,return.value=c('ICD10only','All')){
   if(!{'ICD9to10' %in% ls(envir=.GlobalEnv)}){
     data(ICD9to10)
   }
-  dat <- as.data.frame(ICD9to10, stringsAsFactors = FALSE)
   rv <- match.arg(return.value,c('ICD10only','All'))
   idx <- sapply(ICD9vec, function(ICD9) {
-    grep(sprintf('^%s', ICD9), ICD9to10[, 1])
+    grep(sprintf('^%s', ICD9), ICD9to10$ICD9)
   })
   cd <- ICD9to10[unique(unlist(idx)), ]
   if(rv=='All') return(cd)
-  return(unique(cd[,2]))
+  return(unique(cd$ICD10))
 }
 #' @rdname getICD10
+#' @export
 getICD9 <- function(ICD10vec, return.value = c('ICD9only', 'All')) {
-  if(!{'ICD9to10' %in% ls(envir=.GlobalEnv)}){
-    data(ICD9to10)
+  if(!{'ICD10to9' %in% ls(envir=.GlobalEnv)}){
+    data(ICD10to9)
   }
-  dat <- as.data.frame(ICD9to10, stringsAsFactors = FALSE)
   rv <- match.arg(return.value,c('ICD9only','All'))
   idx <- sapply(ICD10vec, function(ICD10) {
-    grep(sprintf('^%s', ICD10), ICD9to10[, 1])
+    grep(sprintf('^%s', ICD10), ICD10to9$ICD10)
   })
-  cd <- ICD9to10[unique(unlist(idx)), ]
+  cd <- ICD10to9[unique(unlist(idx)), ]
   if(rv=='All') return(cd)
-  return(unique(cd[,1]))
+  return(unique(cd$ICD9))
 }
