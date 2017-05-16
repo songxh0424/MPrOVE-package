@@ -4,7 +4,8 @@ Title: Helper functions for appropriateness metrics
 Version: 0.0.1
 Date: 2017-05-10
 Author: James Henderson
-Maintainer: James Henderson (jbhender@umich.edu)
+Maintainer: James Henderson <jbhender@umich.edu>
 Description: Currently contains functions for converting between ICD9 and ICD10 codes.
 License: GPL 3.0
 RoxygenNote: 6.0.1
+Suggests: testthat
