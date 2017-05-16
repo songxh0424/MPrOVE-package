@@ -41,16 +41,14 @@ from 1 to \code{maxLength}.
 Note that the ICD10 codes in the output are all from \code{codes}.
 }
 \examples{
-ICD9to10.dat = as.data.frame(ICD9to10, stringsAsFactors = FALSE)
 # Exclusions
-bpExclICD9 <- c(1400:20899,23000:23999,8000:83999,85000:85499,86000:86999,
-                90500:90999,92611,92612,929,95200:95299,95800:95999,30400:30429,
-                30440:30449,30540:30579,34460,72920:72929,4210,4211,4219,
-                03800:03899,73000:73099,78320:78329,78079,78080:78089,28590:28599,
-                72142,72191,72270,72273,7244)
-bpExclICD10 <- unique(getICD10(bpExclICD9)) 
+bpExclICD9 <- c(1400:2089,2300:2399,8000:8399,8500:8549,8600:8699,
+                9050:9099,92611,92612,929,9520:9529,9580:9599,3040:3042,
+                3044,3054:3057,34460,7292,4210,4211,4219,0380:0389,01,
+                7300:7309,7832,78079,7808,2859)
+bpExclICD10 <- getICD10(bpExclICD9)
 
-createLIKE(codes = bpExclICD10, dict = ICD9to10.dat$ICD10)
+createLIKE(codes = bpExclICD10, dict = ICD9to10$ICD10)
 
-convertToLike(codes = bpExclICD10, dict = ICD9to10.dat$ICD10, maxLength = 4)
+convertToLike(codes = bpExclICD10, dict = ICD9to10$ICD10, maxLength = 4)
 }

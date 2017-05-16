@@ -26,6 +26,10 @@ the requested ICD9 codes.
 \description{
 Convert between ICD9 codes and ICD10 codes
 }
+\details{
+For \code{getICD10}, the conversion is done using \code{ICD9to10} dataset. 
+For \code{getICD9}, the conversion is done using \code{ICD10to9} dataset.
+}
 \examples{
 ICD9vec <- as.character(c(30781,33900:33999,3460:3469))
 ICD10vec <- getICD10(ICD9vec)
