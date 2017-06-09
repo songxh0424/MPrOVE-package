@@ -1,0 +1,12 @@
+Package: MPrOVE
+Type: Package
+Title: Helper functions for appropriateness metrics
+Version: 0.0.002
+Date: 2017-05-11
+Author: James Henderson
+Maintainer: James Henderson <jbhender@umich.edu>
+Description: Currently contains functions for converting between ICD9 and ICD10 codes.
+License: GPL 3.0
+Depends: stringr, dplyr, RcppTOML
+RoxygenNote: 6.0.1
+Suggests: testthat
