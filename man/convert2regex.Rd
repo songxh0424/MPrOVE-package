@@ -4,7 +4,7 @@
 \alias{convert2regex}
 \title{Create "REGEXP_LIKE" SQL commands}
 \usage{
-convert2regex(nm, str, colName)
+convert2regex(nm, str, colName, add.periods = FALSE)
 }
 \arguments{
 \item{nm}{A character vector of starting strings of ICD10 codes.}
@@ -14,6 +14,9 @@ Only the matching ones in \code{nm} are considered to create the output SQL
 commands.}
 
 \item{colName}{The corresponding column name to put in "REGEXP_LIKE" commands.}
+
+\item{add.periods}{A logical value controlling whether or not to add periods after
+the third character of ICD codes.}
 }
 \value{
 A character string of a series of "REGEXP_LIKE" SQL commands.

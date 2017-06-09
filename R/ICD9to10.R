@@ -1,4 +1,6 @@
 #' Mappings from ICD-9 codes to ICD-10 codes
+#' @name ICD9to10
+#' @docType data
 #' @description \code{ICD9to10} is a data frame read from 2017_I9gem.txt file. It 
 #' maps ICD-9 codes to ICD-10 codes. 
 #' @usage data(ICD9to10)
@@ -13,5 +15,4 @@
 #' @details For further information about the mapping system, see 
 #' Dxgem_guide_2017.pdf and GemsTechDoc_2017.pdf. 
 #' @source \link{https://www.cms.gov/Medicare/Coding/ICD10/2017-ICD-10-CM-and-GEMs.html}
-#' @export
-"ICD9to10"
+NULL

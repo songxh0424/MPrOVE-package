@@ -13,3 +13,15 @@ test_that("results are the same as the results stored in an RDS file", {
   expect_equal_to_reference(convertToLike(codes = bpExclICD10, dict = ICD9to10$ICD10, maxLength = 4), 
                             file = "convert.rds")
 })
+
+test_that("codes that share few similar leading substrings (less than minGroup)
+          don't cause errors", {
+  teststr1 <- c("A001", "B951", "C269")
+  teststr2 <- c("A001", "A000", "A009", "A0100")
+  expect_error(createLIKE(codes = teststr1, dict = ICD9to10$ICD10), NA)
+  expect_error(convertToLike(codes = teststr1, dict = ICD9to10$ICD10), NA)
+  expect_error(createLIKE(codes = teststr2, dict = ICD9to10$ICD10, 
+                          minGroup = 5), NA)
+  expect_error(convertToLike(codes = teststr2, dict = ICD9to10$ICD10, 
+                             minGroup = 5), NA)
+})

@@ -6,6 +6,8 @@
 #' Only the matching ones in \code{nm} are considered to create the output SQL 
 #' commands. 
 #' @param colName The corresponding column name to put in "REGEXP_LIKE" commands.
+#' @param add.periods A logical value controlling whether or not to add periods after
+#' the third character of ICD codes. 
 #' @details \code{str} is usually a very short string. The function first extracts 
 #' all the strings in \code{nm} that start with \code{str}. Then those strings are
 #' divided into groups that share the first 1, 2, or 3 letters, with only the last
@@ -24,12 +26,12 @@
 #' 
 #' cat(convert2regex(nm,'C',colName = 'DX_CD'))
 #' @export
-convert2regex <- function(nm,str,colName){
+convert2regex <- function(nm,str,colName,add.periods=FALSE){
   toBeConverted <- nm[grep(sprintf('^%s',str),nm)]
   # lngth <- sapply(toBeConverted,function(x) length(strsplit(x,'')[[1]]))
   lngth <- stringr::str_length(toBeConverted)
   
-  outStr <- ' ' #iniatilize
+  outStr <- '' #iniatilize
   if(any(lngth==2)){
     # second <- sapply(toBeConverted[which(lngth==2)],function(x) strsplit(x,'')[[1]][2])
     second <- stringr::str_sub(toBeConverted[lngth==2], start = 2, end = 2)
@@ -46,7 +48,7 @@ convert2regex <- function(nm,str,colName){
              toBeConverted[lngth==3])
         ]
       third <- stringr::str_sub(tbc, start = 3, end = 3) 
-      outStr <- sprintf("%s OR REGEXP_LIKE (%s,'^%s%s[%s]','im')\n",
+      outStr <- sprintf("%sOR REGEXP_LIKE (%s,'^%s%s[%s]','im')\n",
                         outStr,colName,str,sec,
                         paste(third,collapse=','))
     }
@@ -62,9 +64,16 @@ convert2regex <- function(nm,str,colName){
              toBeConverted[lngth==4])
         ]
       fourth <- stringr::str_sub(tbc, start = 4, end = 4)  
-      outStr <- sprintf("%s OR REGEXP_LIKE (%s,'^%s%s.[%s]','im')\n",
-                        outStr,colName,str,sec,
-                        paste(fourth,collapse=','))
+      if(add.periods) {
+        outStr <- sprintf("%sOR REGEXP_LIKE (%s,'^%s%s.[%s]','im')\n",
+                          outStr,colName,str,sec,
+                          paste(fourth,collapse=','))
+      }
+      else {
+        outStr <- sprintf("%sOR REGEXP_LIKE (%s,'^%s%s[%s]','im')\n",
+                          outStr,colName,str,sec,
+                          paste(fourth,collapse=','))
+      }
     }
   }
   

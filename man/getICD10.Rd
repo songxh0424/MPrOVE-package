@@ -5,15 +5,21 @@
 \alias{getICD9}
 \title{Convert between ICD9 codes and ICD10 codes}
 \usage{
-getICD10(ICD9vec, return.value = c("ICD10only", "All"))
+getICD10(ICD9vec, return.value = c("ICD10only", "All"), option = c("1", "2",
+  "3"))
 
-getICD9(ICD10vec, return.value = c("ICD9only", "All"))
+getICD9(ICD10vec, return.value = c("ICD9only", "All"), option = c("2", "1",
+  "3"))
 }
 \arguments{
 \item{ICD9vec}{A vector of ICD9 codes to convert}
 
-\item{return.value}{By default only ICD10 codes are returned, set to 'All' 
-to also return flags}
+\item{return.value}{By default only ICD10 codes are returned, set to 'All' to also 
+return flags.}
+
+\item{option}{Choose from 1 to 3 to specify what table to be used in conversion.
+Choose 1 for ICD9to10, 2 for ICD10to9, and 3 for using both and returning the union of
+two sets of results. Default for \code{getICD10} is 1, while default for \code{getICD9} is 2.}
 
 \item{ICD10vec}{A vector of ICD10 codes to convert}
 }
@@ -27,8 +33,10 @@ the requested ICD9 codes.
 Convert between ICD9 codes and ICD10 codes
 }
 \details{
-For \code{getICD10}, the conversion is done using \code{ICD9to10} dataset. 
-For \code{getICD9}, the conversion is done using \code{ICD10to9} dataset.
+For \code{getICD10}, the conversion is done using \code{ICD9to10} dataset by default. 
+For \code{getICD9}, the conversion is done using \code{ICD10to9} dataset by default. If option 
+is set to 3 and return.value is set to 'All', then an additional column \code{From} is created
+to indicate the source (ICD9to10 or ICD10to9) of each line of conversion result.
 }
 \examples{
 ICD9vec <- as.character(c(30781,33900:33999,3460:3469))

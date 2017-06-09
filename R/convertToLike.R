@@ -34,11 +34,15 @@
 createLIKE <- function(codes,dict,n=2,minGroup=2){
   # the naming convention assumes n=2, but the function should be generic
   
+  if(length(codes) == 0) return(NULL)
+  
   # get all n letter combinations starting strings in codes
   # two <- sapply(strsplit(codes,''),function(x) paste(x[1:n],collapse=''))
   two = sapply(codes, function(str) str_sub(str, end = n))
   twoTab <- table(two)
   two <- names(twoTab[which(twoTab >= minGroup)])
+  # if two is an empty vector, put all codes in 'IN' list directly
+  if(length(two) == 0) return(list('LIKE' = list(), 'IN' = codes))
   
   # flag n letter codes for which subsets exhaust dict
   twoFlag <- sapply(two,checkLike,codes=codes,dict=dict)

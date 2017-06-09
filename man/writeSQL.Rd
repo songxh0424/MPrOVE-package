@@ -4,7 +4,8 @@
 \alias{writeSQL}
 \title{Create SQL commands}
 \usage{
-writeSQL(codeList, colName, file, write.file = TRUE)
+writeSQL(codeList, colName, file = NULL, write.file = TRUE,
+  add.periods = FALSE)
 }
 \arguments{
 \item{colName}{The corresponding column name to put in "REGEXP_LIKE" commands.}
@@ -15,11 +16,14 @@ writeSQL(codeList, colName, file, write.file = TRUE)
 into \code{file}. Default is \code{TRUE}. When \code{write.file} is \code{FALSE}, 
 the function will return the output as a character string instead.}
 
+\item{add.periods}{If TRUE, processes each 'IN' statement with \link{\code{addPeriods}}. Defaults to FALSE.}
+
 \item{codelist}{List output from \code{createLIKE} or \code{convertToLike}.}
 }
 \value{
-This function doesn't return any value. It creates a txt file to the 
-specified path. The txt file contains a series of "REGEXP_LIKE" and "IN" commands
+If write.file=FALSE (default), returns a partial sql query as a string.
+Otherwise, writes that string to a text file as specified.
+The returned string/file contains a series of "REGEXP_LIKE" and "IN" commands
 connected by "OR".
 }
 \description{
@@ -32,14 +36,14 @@ commands to query codes in \code{codelist$LIKE}, and creates "IN" commands
 to query codes in \code{codelist$IN}
 }
 \examples{
-bpExclICD9 <- c(1400:2089,2300:2399,8000:8399,8500:8549,8600:8699,
+ICD9 <- c(1400:2089,2300:2399,8000:8399,8500:8549,8600:8699,
                 9050:9099,92611,92612,929,9520:9529,9580:9599,3040:3042,
                 3044,3054:3057,34460,7292,4210,4211,4219,0380:0389,01,
                 7300:7309,7832,78079,7808,2859)
-bpExclICD10 <- getICD10(bpExclICD9)
-codeList <- convertToLike(codes = bpExclICD10, dict = ICD9to10$ICD10,2,4)
+ICD10 <- getICD10(ICD9)
+codeList <- convertToLike(codes = ICD10, dict = ICD9to10$ICD10,2,4)
 
-writeSQL(codeList,'DX_CD',file='BackPain-ICD10-exclusions.txt')
+cat(writeSQL(codeList,'DX_CD',file=NULL,write.file=FALSE,add.periods=FALSE))
 }
 \seealso{
 \code{\link{convert2regex}}, \code{\link{createLIKE}}, 
