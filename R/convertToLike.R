@@ -8,6 +8,7 @@
 #' @param n The length of starting strings used for grouping ICD10 codes. 
 #' @param minGroup The minimum number of occurrences for a starting string pattern
 #' to be put in the \code{$LIKE} list. 
+#' @param thres A percentage threshold for passing the check. 
 #' @param maxLength The maximum length of starting strings considered in \code{$LIKE}. 
 #' @details \code{convertToLike} performs similar task to \code{createLIKE}, except 
 #' that instead of using a fixed length, it considers all starting strings with length 
@@ -31,7 +32,7 @@
 #' 
 #' convertToLike(codes = bpExclICD10, dict = ICD9to10$ICD10, maxLength = 4)
 #' @export
-createLIKE <- function(codes,dict,n=2,minGroup=2){
+createLIKE <- function(codes,dict,n=2,minGroup=2,thres=100){
   # the naming convention assumes n=2, but the function should be generic
   
   if(length(codes) == 0) return(NULL)
@@ -45,7 +46,7 @@ createLIKE <- function(codes,dict,n=2,minGroup=2){
   if(length(two) == 0) return(list('LIKE' = list(), 'IN' = codes))
   
   # flag n letter codes for which subsets exhaust dict
-  twoFlag <- sapply(two,checkLike,codes=codes,dict=dict)
+  twoFlag <- sapply(two,checkLike,codes=codes,dict=dict,thres=thres)
   codesList <- lapply(two[which(twoFlag)],function(str){
     # codes[grep(sprintf('^%s',str),codes)]
     codes[str_sub(codes, end = n) == str]
@@ -57,17 +58,17 @@ createLIKE <- function(codes,dict,n=2,minGroup=2){
 }
 #' @rdname createLIKE
 #' @export
-convertToLike <- function(codes,dict,minGroup=2,maxLength=3){
+convertToLike <- function(codes,dict,minGroup=2,maxLength=3,thres=100){
   # given a vector of codes, collect similar codes into like statements
   # must not return any srings in dict but not in codes #
   # minGroup is a control parameter for how many codes are needed to convert 
   # to a 'LIKE' statement
   # maxLength is the largest starting string to consider grouping
   
-  out <- createLIKE(codes,dict,1,minGroup)
+  out <- createLIKE(codes,dict,1,minGroup,thres=thres)
   if(maxLength > 1 & length(out$IN)>=minGroup){
     for(n in 2:maxLength){
-      tmp <- createLIKE(out$IN,dict,n,minGroup)
+      tmp <- createLIKE(out$IN,dict,n,minGroup,thres=thres)
       out$LIKE <- c(out$LIKE,tmp$LIKE)
       out$IN <- tmp$IN
       if(length(tmp$IN)<minGroup) break
