@@ -4,15 +4,18 @@
 \alias{outputSQL}
 \title{Output SQL files}
 \usage{
-outputSQL(tomlFile, numTemplate, denTemplate, years = 2013:2017,
-  output.path = "", option = c("1", "2", "3"))
+outputSQL(tomlFile, numTemplate, eligTemplate, exclTemplate,
+  years = 2013:2017, output.path = "", option = c("1", "2", "3"),
+  num = TRUE, elig = TRUE, excl = TRUE)
 }
 \arguments{
 \item{tomlFile}{The file name of the TOML file to be used.}
 
 \item{numTemplate}{The file name of the template SQL file for numerator.}
 
-\item{denTemplate}{The file name of the template SQL file for denominator.}
+\item{eligTemplate}{The file name of the template SQL file for eligible.}
+
+\item{exclTemplate}{The file name of the template SQL file for exclusion.}
 
 \item{years}{A vector of desired years to be pulled from the database.}
 
@@ -21,6 +24,12 @@ outputSQL(tomlFile, numTemplate, denTemplate, years = 2013:2017,
 \item{option}{Choose from 1 to 3 to specify what table to be used in conversion. 
 Choose 1 for ICD9to10, 2 for ICD10to9, and 3 for using both and returning the union of
 two sets of results. Default is 1.}
+
+\item{num}{Logical value to determine if imaging files should be generated.}
+
+\item{elig}{Logical value to determine if eligible files should be generated.}
+
+\item{excl}{Logical value to determine if exclusion files should be generated.}
 }
 \description{
 This function outputs several SQL files, based on information stored
@@ -34,9 +43,4 @@ Whereas for year after 2015, they will use ICD-10 codes. And for year 2015, they
 use both, so there will be two eligible files and two exclusion file. 
 If the toml file does not contain exclusions, then no sql files will be generated for 
 exclusions. This applies to eligible and numerator as well.
-}
-\examples{
-## suppose the working directory is MPrOVE
-outputSQL('./toml/BackPain.toml', './sql/pacprPX_CD-template.sql', 
-          './sql/pacprDX_CD-template.sql', output.path = './sql/pacpr/BackPain/')
 }

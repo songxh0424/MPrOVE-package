@@ -45,7 +45,7 @@ get.ICD.df <- function(toml, output = c("ICD9", "ICD10"), minGroup = 2, maxLengt
         ICD9to10$ICD9[grep(sprintf("^%s", str), ICD9to10$ICD9)]
       })))
     }
-    if(ICDvers == "ICD10") temp <- getICD10(temp, option = 2)
+    if(ICDvers == "ICD10") temp <- getICD10(temp)
     return(temp)
   })
   leng <- sapply(codes, length)

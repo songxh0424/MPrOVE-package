@@ -11,5 +11,9 @@
 #' addPeriods(bpElibICD10)
 #' @export
 addPeriods <- function(x){
-  paste(stringr::str_sub(x, 1, 3), '.', stringr::str_sub(x, start = 4), sep = '')
+  leng <- str_length(x)
+  ind <- which(leng <= 3)
+  out <- paste(str_sub(x, 1, 3), '.', str_sub(x, start = 4), sep = '')
+  if(any(leng <= 3)) out[ind] = x[ind]
+  return(out)
 }

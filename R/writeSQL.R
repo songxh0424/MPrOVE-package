@@ -58,8 +58,17 @@ writeSQL <- function(codeList,colName,file=NULL,write.file=TRUE,add.periods=FALS
     for(o in unique(one)){
       IN.o <- IN[grep(sprintf('^%s',o),IN)]
       if(add.periods) IN.o <- addPeriods(IN.o)
-      outstr <- sprintf("%sOR %s IN (%s)\n",outstr,colName,
-                        paste(sprintf("'%s'",IN.o),collapse=','))
+      strInPar <- sprintf("'%s'",IN.o)
+      leng <- length(IN.o)
+      if(leng > 100) {
+        id <- c(seq_along(IN.o), 100 * (1:floor(leng/100)) + 0.5)
+        strInPar <- append(strInPar, rep(';', floor(leng/100)))
+        strInPar <- strInPar[order(id)]
+      }
+      strInPar <- str_replace_all(paste(strInPar,collapse=','),',;,',';')
+      strInPar <- str_split(strInPar, ';')[[1]]
+      strIN <- sprintf("OR %s IN (%s)\n",colName,strInPar)
+      outstr <- paste0(c(outstr, strIN), collapse = "")
     }
     
   }

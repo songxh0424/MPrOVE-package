@@ -28,24 +28,27 @@ toml2code <- function(file, minGroup = 2, maxLength = 4, input = c('ICD9', 'ICD1
   elig <- toml$denominator$eligible
   excl <- toml$denominator$exclude
  
-  if("CPT" %in% names(num)) num <- removex(unlist(num$CPT))
-  else {
+  if("CPT" %in% names(num)) {
+    num <- removex(unlist(num$CPT))
+  } else {
     temp <- lapply(num, function(x){
       if("CPT" %in% names(x)) removex(x$CPT)
     })
     num <- unlist(temp)
   }
 
-  if(In %in% names(elig)) elig <- removex(unlist(elig[[In]]))
-  else {
+  if(In %in% names(elig)) {
+    elig <- removex(unlist(elig[[In]]))
+  } else {
     temp <- lapply(elig, function(x){
       if(In %in% names(x)) removex(x[[In]])
     })
     elig <- unlist(temp)
   } 
 
-  if(In %in% names(excl)) excl <- removex(unlist(excl[[In]]))
-  else {
+  if(In %in% names(excl)) {
+    excl <- removex(unlist(excl[[In]]))
+  } else {
     temp <- lapply(excl, function(x){
       if(In %in% names(x)) removex(x[[In]])
     })
@@ -73,14 +76,17 @@ toml2code <- function(file, minGroup = 2, maxLength = 4, input = c('ICD9', 'ICD1
   }
   
   if(Out == 'ICD10') {
-    if(In == 'ICD9') {elig <- getICD10(elig, option = op); excl <- getICD10(excl, option = op)}
-    elig_list <- convertToLike(elig, ICD9to10$ICD10, minGroup, maxLength)
-    excl_list <- convertToLike(excl, ICD9to10$ICD10, minGroup, maxLength)
+    if(In == 'ICD9') {
+      if(op == "3") {elig <- getICD(elig)} else {elig <- getICD10(elig, option = op)}
+      if(op == "3") {excl <- getICD(excl)} else {excl <- getICD10(excl, option = op)}
+    }
+    elig_list <- convertToLike(elig, ICD10to9$ICD10, minGroup, maxLength)
+    excl_list <- convertToLike(excl, ICD10to9$ICD10, minGroup, maxLength)
   }
   if(Out == 'ICD9') {
     if(In == 'ICD10') {elig <- getICD9(elig, option = op); excl <- getICD9(excl, option = op)}
-    elig_list <- convertToLike(elig, ICD10to9$ICD9, minGroup, maxLength)
-    excl_list <- convertToLike(excl, ICD10to9$ICD9, minGroup, maxLength)
+    elig_list <- convertToLike(elig, ICD9to10$ICD9, minGroup, maxLength)
+    excl_list <- convertToLike(excl, ICD9to10$ICD9, minGroup, maxLength)
   }
   
   return(list(num = num_list, elig = elig_list, excl = excl_list))

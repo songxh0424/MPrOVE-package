@@ -3,12 +3,16 @@
 #' in a TOML file and two template SQL files. 
 #' @param tomlFile The file name of the TOML file to be used.
 #' @param numTemplate The file name of the template SQL file for numerator.
-#' @param denTemplate The file name of the template SQL file for denominator. 
+#' @param eligTemplate The file name of the template SQL file for eligible. 
+#' @param exclTemplate The file name of the template SQL file for exclusion.
 #' @param years A vector of desired years to be pulled from the database. 
 #' @param output.path The path to the directory where the output SQL files will be stored. 
 #' @param option Choose from 1 to 3 to specify what table to be used in conversion. 
 #' Choose 1 for ICD9to10, 2 for ICD10to9, and 3 for using both and returning the union of
 #' two sets of results. Default is 1.
+#' @param num Logical value to determine if imaging files should be generated. 
+#' @param elig Logical value to determine if eligible files should be generated. 
+#' @param excl Logical value to determine if exclusion files should be generated. 
 #' @details For each input year, the output files 
 #' include one for the numerator, one for the eligible and one for the exclusions. 
 #' For year before 2015, the eligible file and exclusion file will use ICD-9 codes. 
@@ -16,16 +20,14 @@
 #' use both, so there will be two eligible files and two exclusion file. 
 #' If the toml file does not contain exclusions, then no sql files will be generated for 
 #' exclusions. This applies to eligible and numerator as well. 
-#' @examples 
-#' ## suppose the working directory is MPrOVE
-#' outputSQL('./toml/BackPain.toml', './sql/pacprPX_CD-template.sql', 
-#'           './sql/pacprDX_CD-template.sql', output.path = './sql/pacpr/BackPain/')
+#' 
 #' @export
-outputSQL <- function(tomlFile, numTemplate, denTemplate, years = 2013:2017, 
-                      output.path = '', option = c("1", "2", "3")) {
+outputSQL <- function(tomlFile, numTemplate, eligTemplate, exclTemplate, years = 2013:2017, 
+                      output.path = '', option = c("1", "2", "3"), num = TRUE, elig = TRUE, excl = TRUE) {
   # Read in head and tail for sql file
   sql.num <- readChar(numTemplate, file.info(numTemplate)$size)
-  sql.den <- readChar(denTemplate, file.info(denTemplate)$size)
+  sql.elig <- readChar(eligTemplate, file.info(eligTemplate)$size)
+  sql.excl <- readChar(exclTemplate, file.info(exclTemplate)$size)
   
   op <- match.arg(as.character(option), c("1", "2", "3"))
 
@@ -45,9 +47,11 @@ outputSQL <- function(tomlFile, numTemplate, denTemplate, years = 2013:2017,
     
     for(ICDtype in ICDtypes) {
       # update DX type when needed
-      den.tmp <- str_replace(sql.den, "DX_TYPE='ICDX'", sprintf("DX_TYPE='%s'", ICDtype))
+      elig.tmp <- str_replace(sql.elig, "DX_TYPE='ICDX'", sprintf("DX_TYPE='%s'", ICDtype))
+      excl.tmp <- str_replace(sql.excl, "DX_TYPE='ICDX'", sprintf("DX_TYPE='%s'", ICDtype))
       # update year #
-      den.tmp  <- str_replace(den.tmp, "DOS LIKE '%-YY'", sprintf("DOS LIKE '%%-%s'", yr))
+      elig.tmp  <- str_replace(elig.tmp, "DOS LIKE '%-YY'", sprintf("DOS LIKE '%%-%s'", yr))
+      excl.tmp  <- str_replace(excl.tmp, "DOS LIKE '%-YY'", sprintf("DOS LIKE '%%-%s'", yr))
       num.tmp <- str_replace(sql.num, "DOS LIKE '%-YY'", sprintf("DOS LIKE '%%-%s'", yr))
       
       codeList <- toml2code(tomlFile, output = ICDtype, option = op)
@@ -58,28 +62,26 @@ outputSQL <- function(tomlFile, numTemplate, denTemplate, years = 2013:2017,
       
       null_flags <- c(is.null(num.codes), is.null(elig.codes), is.null(excl.codes))
 
-      num.tmp <- str_replace(num.tmp, "--insert body here\n", num.codes)
-      elig.tmp <- str_replace(den.tmp, "--insert body here\n", elig.codes)
-      excl.tmp <- str_replace(den.tmp, "--insert body here\n", excl.codes)
+      num.tmp <- ifelse(is.null(num.codes), num.tmp, str_replace(num.tmp, "--insert body here\n", num.codes))
+      elig.tmp <- ifelse(is.null(elig.codes), elig.tmp, str_replace(elig.tmp, "--insert body here\n", elig.codes))
+      excl.tmp <- ifelse(is.null(excl.codes), excl.tmp, str_replace(excl.tmp, "--insert body here\n", excl.codes))
       
       file1 = paste(output.path, sprintf("%s_num.sql", yr), sep = "")
       file2 = paste(output.path, sprintf("%s_elig_%s.sql", yr, ICDtype), sep = "")
       file3 = paste(output.path, sprintf("%s_excl_%s.sql", yr, ICDtype), sep = "")
       files = c(file1, file2, file3)
+      tmp = c(num.tmp, elig.tmp, excl.tmp)
       # create
-      cat(comment, num.tmp, sep='', file = file1)
-      cat(comment, elig.tmp, sep='', file = file2)
-      cat(comment, excl.tmp, sep='', file = file3)
-      
-      # delete files with empty body
-      if(any(null_flags)) file.remove(files[null_flags])
+      for(f in files[(!null_flags) & c(num, elig, excl)]) {
+        cat(comment, tmp[which(files == f)], sep = "", file = f)
+      }
     }
   }
 }
 
 #' @export
 updateSQLnum <- function(tomlFile, numTemplate, years = 2014:2017, output.path = '') {
-  # Read in head and tail for sql file
+  # Read in numerator template sql file
   sql.num <- readChar(numTemplate, file.info(numTemplate)$size)
   
   # Create additional header string #
